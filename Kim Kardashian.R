@@ -76,7 +76,7 @@ Kendall.names = c("Kendall","Kenny","kendalljenner")
 Kylie.names = c("Kylie","Kyle","kyliejenner")
 Kris.names = c("Kris","krisjenner", "mom")
 Caitlyn.names = c("Caitlyn", "Bruce","Caitlyn_Jenner")
-Kanye.names = c("Kanye","Yeezus","kanyewest")
+Kanye.names = c("Kanye","Yeezus","Yeezy", "kanyewest")
 North.names = c("North", "North West")
 Saint.names = c("Saint", "Saint West")
 
