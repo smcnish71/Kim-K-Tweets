@@ -65,7 +65,6 @@ data_scores = cbind(data,scores$score)
 data_scores = subset(data_scores, select = -c(id, retweet, author))
 data_scores = rename(data_scores, c("X"= "ID", "scores$score" = "score"))
 
-write.csv(data_scores,file="Tweets with Sentiment.csv",row.names=F)
 
 #Pull out family names to see who Kim tweets about the most
 
@@ -101,13 +100,16 @@ data_names = melt(data_names, id=c("ID","date","link","text","score"))
 
 data_names = data_names[!(data_names$value=="nope"),]
 data_names = data_names[,-6]
+data_names = merge( x= data_names , y= data_scores , by  = "ID" , all.y = TRUE)
+data_names = rename(data_names, c("date.y"="date", "link.y" = "link", "text.y" = "text", "score.y"="score","value"="name"))
+data_names = data_names[,-c(2:5)]
 
-data_dates = subset(data_scores, select=c(ID))
-data_names = merge( x= data_names , y= data_dates , by  = "ID" , all.y = TRUE)
-data_names = data_names[!duplicated(data_names[1:6]),]
 
+#how ! is Kim?
+data_exclam = data_names
+data_exclam$exclam = str_count(data_names$text, "!")
 
-write.csv(data_names,file="Tweets by Name and Date.csv",row.names=F)
+write.csv(data_exclam,file="Twitter Data with analysis.csv",row.names=F)
 
 
 #What's kim mad about?
@@ -138,9 +140,3 @@ neg_word_freqs <- data.frame(word = names(v),freq=v)
 
 write.csv(neg_word_freqs,file="Word Frequencies of Negative Tweets.csv",row.names=F)
 
-
-#how ! is Kim?
-data_exclam = data_scores
-data_exclam$exclam = str_count(data_scores$text, "!")
-
-write.csv(data_exclam,file="Exclamation Point Count.csv",row.names=F)
