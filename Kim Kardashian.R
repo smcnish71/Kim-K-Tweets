@@ -102,7 +102,7 @@ data_names = melt(data_names, id=c("ID","date","link","text","score"))
 data_names = data_names[!(data_names$value=="nope"),]
 data_names = data_names[,-6]
 
-data_dates = subset(data_scores, select=c(ID, date))
+data_dates = subset(data_scores, select=c(ID))
 data_names = merge( x= data_names , y= data_dates , by  = "ID" , all.y = TRUE)
 data_names = data_names[!duplicated(data_names[1:6]),]
 
