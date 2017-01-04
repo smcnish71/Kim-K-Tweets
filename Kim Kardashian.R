@@ -92,7 +92,8 @@ data_names$Kris = ifelse(grepl( paste(Kris.names,collapse="|"),data_scores$text,
 data_names$Caitlyn = ifelse(grepl( paste(Caitlyn.names,collapse="|"),data_scores$text, ignore.case= TRUE),"Caitlyn","nope")
 data_names$Kanye = ifelse(grepl( paste(Kanye.names,collapse="|"),data_scores$text, ignore.case= TRUE),"Kanye","nope")
 data_names$North = ifelse(grepl( paste(North.names,collapse="|"),data_scores$text, ignore.case= TRUE),"North","nope")
-data_names$Saint = ifelse(grepl( paste(Saint.names,collapse="|"),data_scores$text, ignore.case= TRUE),"Saint","nope")
+#removed 'Saints' from tagging with Saint name because Reggie Bush played for them
+data_names$Saint = ifelse((grepl( paste(Saint.names,collapse="|"),data_scores$text, ignore.case= TRUE) & !grepl("Saints",data_scores$text, ignore.case= TRUE)),"Saint","nope")
 
 
 #transform data for Tableau
