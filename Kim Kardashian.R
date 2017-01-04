@@ -1,4 +1,4 @@
-setwd("~/Vizs/Kim")
+setwd("~/Vizs/Kim/Kim-K-Tweets")
 data<- read.csv('KimKardashianTweets.csv', header=TRUE, stringsAsFactors = FALSE)
 library(plyr)
 library(reshape)
@@ -65,7 +65,6 @@ data_scores = cbind(data,scores$score)
 data_scores = subset(data_scores, select = -c(id, retweet, author))
 data_scores = rename(data_scores, c("X"= "ID", "scores$score" = "score"))
 
-write.csv(data_scores,file="Tweets with Sentiment.csv")
 
 #Pull out family names to see who Kim tweets about the most
 
@@ -77,7 +76,7 @@ Kendall.names = c("Kendall","Kenny","kendalljenner")
 Kylie.names = c("Kylie","Kyle","kyliejenner")
 Kris.names = c("Kris","krisjenner", "mom")
 Caitlyn.names = c("Caitlyn", "Bruce","Caitlyn_Jenner")
-Kanye.names = c("Kanye","Yeezus","kanyewest")
+Kanye.names = c("Kanye","Yeezus","Yeezy", "kanyewest")
 North.names = c("North", "North West")
 Saint.names = c("Saint", "Saint West")
 
@@ -93,17 +92,25 @@ data_names$Kris = ifelse(grepl( paste(Kris.names,collapse="|"),data_scores$text,
 data_names$Caitlyn = ifelse(grepl( paste(Caitlyn.names,collapse="|"),data_scores$text, ignore.case= TRUE),"Caitlyn","nope")
 data_names$Kanye = ifelse(grepl( paste(Kanye.names,collapse="|"),data_scores$text, ignore.case= TRUE),"Kanye","nope")
 data_names$North = ifelse(grepl( paste(North.names,collapse="|"),data_scores$text, ignore.case= TRUE),"North","nope")
-data_names$Saint = ifelse(grepl( paste(Saint.names,collapse="|"),data_scores$text, ignore.case= TRUE),"Saint","nope")
+#removed 'Saints' from tagging with Saint name because Reggie Bush played for them
+data_names$Saint = ifelse((grepl( paste(Saint.names,collapse="|"),data_scores$text, ignore.case= TRUE) & !grepl("Saints",data_scores$text, ignore.case= TRUE)),"Saint","nope")
 
 
 #transform data for Tableau
 data_names = melt(data_names, id=c("ID","date","link","text","score"))
+
 data_names = data_names[!(data_names$value=="nope"),]
 data_names = data_names[,-6]
-data_dates = subset(data_scores, select=c(date))
-data_names = merge( x= data_names , y= data_dates , by  = "date" , all.y = TRUE)
+data_names = merge( x= data_names , y= data_scores , by  = "ID" , all.y = TRUE)
+data_names = rename(data_names, c("date.y"="date", "link.y" = "link", "text.y" = "text", "score.y"="score","value"="name"))
+data_names = data_names[,-c(2:5)]
 
-write.csv(data_names,file="Tweets by Name and Date.csv")
+
+#how ! is Kim?
+data_exclam = data_names
+data_exclam$exclam = str_count(data_names$text, "!")
+
+write.csv(data_exclam,file="Twitter Data with analysis.csv",row.names=F)
 
 
 #What's kim mad about?
@@ -132,11 +139,5 @@ m <- as.matrix(dtm)
 v <- sort(rowSums(m),decreasing=TRUE)
 neg_word_freqs <- data.frame(word = names(v),freq=v)
 
-write.csv(neg_word_freqs,file="Word Frequencies of Negative Tweets.csv")
+write.csv(neg_word_freqs,file="Word Frequencies of Negative Tweets.csv",row.names=F)
 
-
-#how ! is Kim?
-data_exclam = data_scores
-data_exclam$exclam = str_count(data_scores$text, "!")
-
-write.csv(data_exclam,file="Exclamation Point Count.csv")
